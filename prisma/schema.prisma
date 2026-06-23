@@ -1,0 +1,162 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum RolUsuario {
+  ADMIN
+  SUPERVISOR
+}
+
+enum EstadoObra {
+  EN_EJECUCION
+  FINALIZADA
+  PAUSADA
+}
+
+enum TipoAdicionalDeductivo {
+  ADICIONAL
+  DEDUCTIVO
+}
+
+enum CategoriaGasto {
+  MANO_DE_OBRA
+  MATERIAL
+  EQUIPO
+  SUBCONTRATO
+  OTROS
+}
+
+model Usuario {
+  id        String     @id @default(cuid())
+  nombre    String
+  email     String     @unique
+  password  String
+  rol       RolUsuario
+  createdAt DateTime   @default(now())
+
+  asignaciones    AsignacionObraSupervisor[]
+  gastos          Gasto[]
+  registrosAvance RegistroAvance[]
+}
+
+model Obra {
+  id              String     @id @default(cuid())
+  nombre          String
+  ubicacion       String
+  cliente         String
+  estado          EstadoObra @default(EN_EJECUCION)
+  activa          Boolean    @default(true)
+  fechaInicio     DateTime
+  fechaFinTeorica DateTime
+  createdAt       DateTime   @default(now())
+
+  asignaciones AsignacionObraSupervisor[]
+  titulos      Titulo[]
+}
+
+model AsignacionObraSupervisor {
+  id        String   @id @default(cuid())
+  usuarioId String
+  obraId    String
+  createdAt DateTime @default(now())
+
+  usuario Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  obra    Obra    @relation(fields: [obraId], references: [id], onDelete: Cascade)
+
+  @@unique([usuarioId, obraId])
+}
+
+model Unidad {
+  id        String   @id @default(cuid())
+  nombre    String
+  createdAt DateTime @default(now())
+
+  items Item[]
+}
+
+model Titulo {
+  id        String   @id @default(cuid())
+  obraId    String
+  nombre    String
+  orden     Int
+  createdAt DateTime @default(now())
+
+  obra  Obra   @relation(fields: [obraId], references: [id], onDelete: Cascade)
+  items Item[]
+}
+
+model Item {
+  id            String   @id @default(cuid())
+  tituloId      String
+  nombre        String
+  cantidad      Decimal  @db.Decimal(18, 4)
+  unidadId      String
+  valorUnitario Decimal  @db.Decimal(18, 4)
+  orden         Int
+  createdAt     DateTime @default(now())
+
+  titulo Titulo @relation(fields: [tituloId], references: [id], onDelete: Cascade)
+  unidad Unidad @relation(fields: [unidadId], references: [id], onDelete: Restrict)
+
+  adicionalesDeductivos AdicionalDeductivo[]
+  gastos                Gasto[]
+  programaciones        ProgramacionSemanal[]
+  registrosAvance       RegistroAvance[]
+}
+
+model AdicionalDeductivo {
+  id        String                 @id @default(cuid())
+  tipo      TipoAdicionalDeductivo
+  nombre    String
+  itemId    String
+  monto     Decimal                @db.Decimal(18, 4)
+  createdAt DateTime               @default(now())
+
+  item Item @relation(fields: [itemId], references: [id], onDelete: Cascade)
+}
+
+model Gasto {
+  id          String         @id @default(cuid())
+  itemId      String
+  usuarioId   String
+  descripcion String
+  categoria   CategoriaGasto
+  fecha       DateTime
+  monto       Decimal        @db.Decimal(18, 4)
+  createdAt   DateTime       @default(now())
+
+  item    Item    @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  usuario Usuario @relation(fields: [usuarioId], references: [id], onDelete: Restrict)
+}
+
+model ProgramacionSemanal {
+  id                 String   @id @default(cuid())
+  itemId             String
+  numeroSemana       Int
+  cantidadProgramada Decimal  @db.Decimal(18, 4)
+  createdAt          DateTime @default(now())
+
+  item Item @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  @@unique([itemId, numeroSemana])
+}
+
+model RegistroAvance {
+  id        String   @id @default(cuid())
+  itemId    String
+  usuarioId String
+  cantidad  Decimal  @db.Decimal(18, 4)
+  fecha     DateTime
+  createdAt DateTime @default(now())
+
+  item    Item    @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  usuario Usuario @relation(fields: [usuarioId], references: [id], onDelete: Restrict)
+}
