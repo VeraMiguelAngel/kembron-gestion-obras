@@ -2,6 +2,10 @@
 
 Aplicación web para el seguimiento de obras de construcción: presupuesto (ítems, adicionales/deductivos, gastos), programación semanal y avance real, con un dashboard para administradores y una vista mobile para supervisores de obra.
 
+## Demo en vivo
+
+https://kembron-gestion-obras.vercel.app/
+
 ## Stack tecnológico
 
 - [Next.js](https://nextjs.org) 16 (App Router, Server Actions)

@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { logout } from "@/lib/actions/auth";
 
 const NAV_ITEMS = [
-  { href: "/dashboard", label: "Dashboard" },
+  { href: "/dashboard", label: "Panel" },
   { href: "/obras", label: "Obras" },
   { href: "/usuarios", label: "Usuarios" },
 ];
@@ -24,7 +24,7 @@ export function Sidebar({ user }: { user: SidebarUser }) {
       <div className="flex items-center gap-2 px-5 py-6">
         <span className="h-2.5 w-2.5 rounded-full bg-red-600" />
         <span className="text-sm font-semibold tracking-wide text-white">
-          Kembron
+          Gestor de Obras
         </span>
       </div>
 
