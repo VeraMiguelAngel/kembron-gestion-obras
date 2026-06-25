@@ -1,36 +1,72 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Kembron — Gestión de Obras
 
-## Getting Started
+Aplicación web para el seguimiento de obras de construcción: presupuesto (ítems, adicionales/deductivos, gastos), programación semanal y avance real, con un dashboard para administradores y una vista mobile para supervisores de obra.
 
-First, run the development server:
+## Stack tecnológico
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- [Next.js](https://nextjs.org) 16 (App Router, Server Actions)
+- React 19, TypeScript
+- [Prisma](https://www.prisma.io) 7 (`prisma-client` + `@prisma/adapter-pg`) sobre PostgreSQL ([Neon](https://neon.tech))
+- Tailwind CSS 4
+- Autenticación con sesión en cookie httpOnly firmada (JWT vía [`jose`](https://github.com/panva/jose)) y contraseñas hasheadas con `bcryptjs`
+- Validación de formularios con [Zod](https://zod.dev)
+
+## Correr en local
+
+1. Instalar dependencias:
+
+   ```bash
+   npm install
+   ```
+
+2. Crear un archivo `.env` en la raíz con las siguientes variables:
+
+   | Variable | Descripción |
+   |---|---|
+   | `DATABASE_URL` | Connection string de PostgreSQL (en este proyecto se usa una base de Neon). |
+   | `SESSION_SECRET` | Clave secreta para firmar las cookies de sesión (JWT). Puede generarse con `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`. |
+
+3. Aplicar las migraciones:
+
+   ```bash
+   npx prisma migrate deploy
+   ```
+
+4. Cargar datos de ejemplo:
+
+   ```bash
+   npm run seed
+   ```
+
+5. Levantar el servidor de desarrollo:
+
+   ```bash
+   npm run dev
+   ```
+
+   La app queda disponible en [http://localhost:3000](http://localhost:3000).
+
+## Credenciales de prueba
+
+Creadas por `npm run seed`:
+
+| Email | Password | Rol |
+|---|---|---|
+| `admin@kembron.com` | `Admin123!` | ADMIN |
+| `juan@kembron.com` | `Juan1234` | SUPERVISOR |
+| `laura@kembron.com` | `Laura1234` | SUPERVISOR |
+
+## Roles
+
+- **ADMIN**: acceso completo. Gestiona usuarios y obras, define presupuesto (títulos, ítems, adicionales/deductivos), programación semanal, gastos y registros de avance de cualquier obra, y ve el dashboard global con métricas y curvas de todas las obras.
+- **SUPERVISOR**: ve únicamente las obras que tiene asignadas (vista mobile, "Mis obras"). Puede cargar gastos y registros de avance sobre esas obras, pero no editarlos ni eliminarlos, ni acceder a obras ajenas o a las secciones de administración.
+
+## Troubleshooting
+
+**Error `P1001: Can't reach database server` con Neon en Windows**: en algunas redes, la resolución DNS del host de Neon devuelve un registro IPv6 no enrutable, y las herramientas de Prisma (migraciones, etc.) intentan conectar por IPv6 antes de probar IPv4, agotando el timeout. Si aparece este error, una solución es fijar la IP v4 del endpoint en el hosts file de Windows (`C:\Windows\System32\drivers\etc\hosts`, requiere permisos de administrador):
+
+```
+<IP_v4_del_endpoint> <host_de_neon_de_tu_DATABASE_URL>
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+La IP v4 actual se puede obtener con `nslookup <host>`. Este workaround solo es necesario si aparece ese error puntual — no es un requisito general para correr el proyecto.
