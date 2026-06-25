@@ -31,7 +31,7 @@ const nombreField = z
 
 const emailField = z.email({ error: "Ingresá un email válido." }).trim();
 
-const rolField = z.enum(Object.values(RolUsuario) as [string, ...string[]], {
+const rolField = z.enum(Object.values(RolUsuario) as [RolUsuario, ...RolUsuario[]], {
   error: "Seleccioná un rol válido.",
 });
 
@@ -71,7 +71,7 @@ export type UsuarioFormState =
     }
   | undefined;
 
-const estadoObraField = z.enum(Object.values(EstadoObra) as [string, ...string[]], {
+const estadoObraField = z.enum(Object.values(EstadoObra) as [EstadoObra, ...EstadoObra[]], {
   error: "Seleccioná un estado válido.",
 });
 
@@ -181,9 +181,13 @@ export type ItemFormState =
   | undefined;
 
 export const AdicionalDeductivoFormSchema = z.object({
-  tipo: z.enum(Object.values(TipoAdicionalDeductivo) as [string, ...string[]], {
-    error: "Seleccioná un tipo válido.",
-  }),
+  tipo: z.enum(
+    Object.values(TipoAdicionalDeductivo) as [
+      TipoAdicionalDeductivo,
+      ...TipoAdicionalDeductivo[],
+    ],
+    { error: "Seleccioná un tipo válido." }
+  ),
   nombre: z
     .string()
     .min(2, { error: "El nombre debe tener al menos 2 caracteres." })
@@ -217,9 +221,10 @@ export const GastoFormSchema = z.object({
     .string()
     .min(2, { error: "La descripción debe tener al menos 2 caracteres." })
     .trim(),
-  categoria: z.enum(Object.values(CategoriaGasto) as [string, ...string[]], {
-    error: "Seleccioná una categoría válida.",
-  }),
+  categoria: z.enum(
+    Object.values(CategoriaGasto) as [CategoriaGasto, ...CategoriaGasto[]],
+    { error: "Seleccioná una categoría válida." }
+  ),
   fecha: z.coerce.date({ error: "Ingresá una fecha válida." }),
   monto: z.coerce
     .number({ error: "Ingresá un monto válido." })
