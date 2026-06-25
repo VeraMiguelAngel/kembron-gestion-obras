@@ -38,16 +38,10 @@ export function ObraCard({
   avanceEconomico: number;
 }) {
   return (
-    <div className="group relative flex flex-col gap-3 rounded-lg border border-zinc-200 bg-white p-4 shadow-sm transition-all hover:border-zinc-300 hover:shadow-md">
-      <Link
-        href={`/obras/${obra.id}`}
-        className="absolute inset-0 z-0 rounded-lg"
-        aria-label={`Ver obra ${obra.nombre}`}
-      />
-
+    <div className="flex flex-col gap-3 rounded-lg border border-zinc-200 bg-white p-4 shadow-sm transition-all hover:border-zinc-300 hover:shadow-md">
       <div className="flex items-start justify-between gap-2">
         <div>
-          <h2 className="text-lg font-semibold text-zinc-900 group-hover:text-red-600">
+          <h2 className="text-lg font-semibold text-zinc-900">
             {obra.nombre}
           </h2>
           <p className="text-sm text-zinc-600">{obra.ubicacion}</p>
@@ -80,10 +74,13 @@ export function ObraCard({
         </p>
       )}
 
-      <div className="relative z-10 mt-2 flex items-center justify-between">
-        <span className="text-sm font-medium text-zinc-500 transition-colors group-hover:text-red-600">
+      <div className="mt-2 flex items-center justify-between">
+        <Link
+          href={`/obras/${obra.id}`}
+          className="cursor-pointer text-sm font-medium text-zinc-500 transition-colors hover:text-red-600"
+        >
           Ver detalle →
-        </span>
+        </Link>
         <ToggleActivaForm
           action={toggleObraActiva.bind(null, obra.id, obra.activa)}
           activa={obra.activa}
