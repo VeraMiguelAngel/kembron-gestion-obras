@@ -106,7 +106,7 @@ export default async function DashboardPage() {
     new Prisma.Decimal(0)
   );
   const avancePromedio = porcentajeAvancePromedio(
-    obrasConCalculos.map((obra) => obra.avanceFisico)
+    obrasConCalculos.filter((obra) => obra.activa).map((obra) => obra.avanceFisico)
   );
 
   const maximoPresupuestoEjecutado = obrasConCalculos.reduce(

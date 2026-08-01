@@ -12,6 +12,7 @@ import {
   calcularSemanasObra,
   diasTranscurridos,
   porcentajeTiempoTranscurrido,
+  formatRangoSemana,
 } from "@/lib/programacion";
 import {
   curvaFisicaPlanificada,
@@ -89,6 +90,11 @@ export default async function ResumenPage({
     semanas
   );
 
+  const semanaLabels = semanas.map((semana) => `S${semana.numero}`);
+  const semanaTooltipLabels = semanas.map(
+    (semana) => `Semana ${semana.numero} (${formatRangoSemana(semana)})`
+  );
+
   return (
     <div className="flex flex-col gap-8">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -131,6 +137,8 @@ export default async function ResumenPage({
                   valores: curvaFisicaRealSerie.map((valor) => Number(valor)),
                 },
               ]}
+              xLabels={semanaLabels}
+              xTooltipLabels={semanaTooltipLabels}
             />
           </section>
 
@@ -151,6 +159,8 @@ export default async function ResumenPage({
                   valores: curvaFinRealSerie.map((valor) => Number(valor)),
                 },
               ]}
+              xLabels={semanaLabels}
+              xTooltipLabels={semanaTooltipLabels}
             />
           </section>
 

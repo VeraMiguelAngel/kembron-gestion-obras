@@ -21,24 +21,34 @@ export function PresupuestoEjecutadoBar({
 
   return (
     <div className="flex flex-col gap-1">
-      <div className="flex justify-between text-xs text-zinc-600">
-        <span>{label}</span>
-        <span>
-          Presupuestado: {formatNumero(presupuestado)} — Ejecutado:{" "}
-          {formatNumero(ejecutado)}
+      <span className="text-xs text-zinc-600">{label}</span>
+      <div className="flex items-center gap-3 text-xs text-zinc-600">
+        <span className="w-28 shrink-0 truncate" title="Presupuestado">
+          Presupuestado
+        </span>
+        <div className="h-2 flex-1 rounded-full bg-zinc-100">
+          <div
+            className="h-2 rounded-full bg-zinc-400"
+            style={{ width: `${pctPresupuestado}%` }}
+          />
+        </div>
+        <span className="w-24 shrink-0 text-right">
+          {formatNumero(presupuestado)}
         </span>
       </div>
-      <div className="h-2 w-full rounded-full bg-zinc-100">
-        <div
-          className="h-2 rounded-full bg-zinc-400"
-          style={{ width: `${pctPresupuestado}%` }}
-        />
-      </div>
-      <div className="h-2 w-full rounded-full bg-zinc-100">
-        <div
-          className="h-2 rounded-full bg-black"
-          style={{ width: `${pctEjecutado}%` }}
-        />
+      <div className="flex items-center gap-3 text-xs text-zinc-600">
+        <span className="w-28 shrink-0 truncate" title="Ejecutado">
+          Ejecutado
+        </span>
+        <div className="h-2 flex-1 rounded-full bg-zinc-100">
+          <div
+            className="h-2 rounded-full bg-black"
+            style={{ width: `${pctEjecutado}%` }}
+          />
+        </div>
+        <span className="w-24 shrink-0 text-right">
+          {formatNumero(ejecutado)}
+        </span>
       </div>
     </div>
   );
